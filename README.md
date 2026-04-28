@@ -46,12 +46,21 @@ BlissBites/
 │   └── app.html                ← Full HTML frontend (all pages + CSS + JS)
 │
 ├── backend/
-│   ├── app.py                  ← Flask server (serves HTML + API endpoints)
+│   ├── app.py                  ← Flask server (main entry point)
 │   ├── ai_services.py          ← Google Gemini AI integration
-│   ├── food_retrieval.py       ← ChromaDB vector search + restaurant data
+│   ├── data_storage.py         ← Logic for handling JSON persistence
+│   ├── food_data.py            ← Raw restaurant/food data definitions
+│   ├── food_retrieval.py       ← Search logic for recommendations
+│   ├── run.py                  ← Alternative startup script
+│   ├── vector_store.py         ← ChromaDB configuration and indexing
+│   ├── chroma_data/            ← Persistent ChromaDB vector collections
+│   ├── data/                   ← Local storage for user interactions
+│   │   ├── feedback.json
+│   │   ├── history.json
+│   │   └── profiles.json
+│   ├── moodbite_db/            ← Core database storage for mood mappings
 │   └── src/
 │       ├── emotion_engine/     ← Core mood + scoring pipeline
-│       │   ├── __init__.py
 │       │   ├── food_intent_logic.py
 │       │   ├── output_builder.py
 │       │   ├── pipeline.py
@@ -59,17 +68,18 @@ BlissBites/
 │       │   └── scoring.py
 │       └── main.py             ← Standalone pipeline runner
 │
-├── tests/                      ← All unit tests
+├── tests/                      ← Unit and integration tests
 │   ├── test_food_intent.py
 │   ├── test_output_builder.py
 │   ├── test_pipeline.py
 │   ├── test_questionnaire.py
 │   └── test_scoring.py
 │
-├── .env.example                ← API key template (safe to push)
-├── .gitignore
+├── .env                        ← Environment variables (Local only)
+├── .gitignore                  ← Prevents pushing .env and __pycache__
+├── README.md
 ├── requirements.txt            ← All dependencies
-└── README.md
+└── test_backend.py             ← Root-level backend testing script
 ```
 
 ---
@@ -118,7 +128,7 @@ Results rendered dynamically in the browser
 
 | Layer | Technology |
 |---|---|
-| Frontend | HTML, CSS, Vanilla JavaScript |
+| Frontend | HTML5, CSS3(Grid/Flexbox), Vanilla JavaScript |
 | Backend | Python Flask |
 | Emotion Engine | Python rule-based logic |
 | Vector Search | ChromaDB + sentence-transformers |
