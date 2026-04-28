@@ -1,0 +1,54 @@
+{
+  "user1": [
+    {
+      "mood": "happy",
+      "energy": "high",
+      "foods": [
+        "Dal Tadka",
+        "Khichdi"
+      ],
+      "timestamp": "2026-04-27T10:11:01.586977",
+      "id": 1
+    }
+  ],
+  "testuser": [
+    {
+      "mood": "happy",
+      "energy": "high",
+      "foods": [
+        "Paneer Tikka",
+        "Butter Naan"
+      ],
+      "timestamp": "2026-04-28T12:00:00",
+      "id": 2
+    }
+  ],
+  "anonymous": [
+    {
+      "mood": "tired",
+      "energy": "low",
+      "foods": [
+        "Poha (Friends Corner)",
+        "Sunny Side Up (Alpine)",
+        "Egg Toast (Mishti)"
+      ],
+      "stress": 4,
+      "budget": 110,
+      "timestamp": "2026-04-28T21:38:17.339750",
+      "id": 1
+    },
+    {
+      "mood": "tired",
+      "energy": "low",
+      "foods": [
+        "Pomegranate Juice Medium (CJC)",
+        "Mix Vegetable Juice Medium (CJC)",
+        "Carrot Juice Medium (CJC)"
+      ],
+      "stress": 4,
+      "budget": 110,
+      "timestamp": "2026-04-28T21:40:00.910339",
+      "id": 2
+    }
+  ]
+}

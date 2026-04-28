@@ -1,1 +1,44 @@
-{}
+[
+  {
+    "user_id": "user1",
+    "food_name": "Dal Tadka",
+    "rating": 5,
+    "comment": "Great!",
+    "mood": "happy",
+    "timestamp": "2026-04-27T10:11:01.501974",
+    "id": 1
+  },
+  {
+    "user_id": "guest",
+    "app_rating": 5,
+    "ai_accuracy": "Perfectly matched",
+    "suggestions": "nice keep growing",
+    "food_name": "Corn Pizza (Pizza Town)",
+    "rating": null,
+    "food_effect": "Exactly what I needed!",
+    "timestamp": "2026-04-28T13:45:57.505335",
+    "id": 2
+  },
+  {
+    "user_id": "guest",
+    "app_rating": 5,
+    "ai_accuracy": "Perfectly matched",
+    "suggestions": "",
+    "food_name": "Espresso (Nescafe)",
+    "rating": 5,
+    "food_effect": "Exactly what I needed!",
+    "timestamp": "2026-04-28T14:00:58.324065",
+    "id": 3
+  },
+  {
+    "user_id": "guest",
+    "app_rating": 5,
+    "ai_accuracy": "Perfectly matched",
+    "suggestions": "",
+    "food_name": "Pomegranate Juice Medium (CJC)",
+    "rating": 5,
+    "food_effect": "Exactly what I needed!",
+    "timestamp": "2026-04-28T21:41:45.800515",
+    "id": 4
+  }
+]

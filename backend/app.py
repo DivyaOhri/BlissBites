@@ -348,7 +348,7 @@ if page == "🏠 Home":
 
     st.markdown("""
     <div class="stat-row">
-        <div class="stat-box"><div class="stat-num">521</div><div class="stat-lbl">Menu Items</div></div>
+        <div class="stat-box"><div class="stat-num">1527</div><div class="stat-lbl">Menu Items</div></div>
         <div class="stat-box"><div class="stat-num">19</div><div class="stat-lbl">Restaurants</div></div>
         <div class="stat-box"><div class="stat-num">7</div><div class="stat-lbl">Mood Types</div></div>
         <div class="stat-box"><div class="stat-num">100%</div><div class="stat-lbl">Local Data</div></div>
@@ -364,7 +364,7 @@ if page == "🏠 Home":
         <div class="feat-card" style="border-top-color:#5BAF6E;">
             <div style="font-size:1.8rem;margin-bottom:10px;">📍</div>
             <h3>Truly Local</h3>
-            <p>521 real menu items from 19 restaurants around Shoolini campus. Every recommendation is walkable from your lecture hall.</p>
+            <p>1527 real menu items from 19 restaurants around Shoolini campus. Every recommendation is walkable from your lecture hall.</p>
         </div>
         <div class="feat-card" style="border-top-color:#9B8EC4;">
             <div style="font-size:1.8rem;margin-bottom:10px;">💸</div>
@@ -437,6 +437,41 @@ elif page == "😊 Mood Check":
     st.session_state["energy_score"] = energy
     st.markdown('</div>', unsafe_allow_html=True)
 
+    # Mental clarity (q4)
+    st.markdown('<div class="panel"><div class="panel-title">🧠 How mentally clear do you feel right now?</div>', unsafe_allow_html=True)
+    clarity = st.radio(
+        "",
+        [
+            "A: Very clear and focused",
+            "B: Mostly clear",
+            "C: A bit distracted",
+            "D: Very distracted or overwhelmed"
+        ],
+        index=st.session_state.get("clarity_idx", 1),
+        key="clarity_radio",
+        label_visibility="collapsed"
+    )
+    clarity_option = clarity[0] if clarity else "B"
+    st.session_state["clarity_option"] = clarity_option
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    # Motivation level (q5)
+    st.markdown('<div class="panel"><div class="panel-title">🎯 How motivated are you to prepare food right now?</div>', unsafe_allow_html=True)
+    motivation = st.radio(
+        "",
+        [
+            "A: High - I can cook properly",
+            "B: Medium - I can make something simple",
+            "C: Low - I need something very quick"
+        ],
+        index=st.session_state.get("motivation_idx", 1),
+        key="motivation_radio",
+        label_visibility="collapsed"
+    )
+    motivation_option = motivation[0] if motivation else "B"
+    st.session_state["motivation_option"] = motivation_option
+    st.markdown('</div>', unsafe_allow_html=True)
+
     # Budget & cuisine
     st.markdown('<div class="panel"><div class="panel-title">🎯 Your Preferences</div>', unsafe_allow_html=True)
     c1, c2 = st.columns(2)
@@ -459,13 +494,17 @@ elif page == "😊 Mood Check":
 
         q2 = next((v for r,v in energy_to_q2.items() if energy in r), "B")
         q3 = next((v for r,v in stress_to_q3.items() if stress in r), "B")
+        
+        # Get q4 and q5 from session state (set by radio buttons)
+        q4 = st.session_state.get("clarity_option", "B")
+        q5 = st.session_state.get("motivation_option", "B")
 
         answers = {
             "q1": mood_to_q1.get(selected_mood, "A"),
             "q2": q2,
             "q3": q3,
-            "q4": "B",
-            "q5": "B",
+            "q4": q4,
+            "q5": q5,
         }
 
         # Get user_id from profile (for history tracking)

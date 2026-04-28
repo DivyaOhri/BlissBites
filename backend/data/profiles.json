@@ -1,1 +1,16 @@
-{}
+{
+  "user1": {
+    "name": "John",
+    "dietary": "vegetarian",
+    "cuisine": "Indian",
+    "budget": 150,
+    "updated_at": "2026-04-27T10:10:45.355142"
+  },
+  "ankat": {
+    "name": "Ankat",
+    "dietary": "Vegetarian",
+    "cuisine": "Any",
+    "budget": 100,
+    "updated_at": "2026-04-28T21:42:50.404831"
+  }
+}

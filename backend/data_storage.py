@@ -2,6 +2,7 @@
 """
 Data Storage Module for MoodBite
 Handles persistent storage for user profiles and mood/food history
+Now with Vector Database integration for semantic search
 """
 
 import json
@@ -18,15 +19,49 @@ HISTORY_FILE = os.path.join(DATA_DIR, "history.json")
 # Ensure data directory exists
 os.makedirs(DATA_DIR, exist_ok=True)
 
+# Import vector store (lazy loading to avoid startup issues)
+_vector_store = None
+
+def _get_vector_store():
+    """Lazy load vector store to avoid import errors."""
+    global _vector_store
+    if _vector_store is None:
+        try:
+            from vector_store import (
+                add_profile_vector, find_similar_profiles,
+                add_feedback_vector, find_similar_feedback,
+                get_popular_foods, add_mood_entry, get_mood_trends,
+                hybrid_food_search, initialize_all_collections
+            )
+            _vector_store = {
+                "add_profile": add_profile_vector,
+                "find_similar_profiles": find_similar_profiles,
+                "add_feedback": add_feedback_vector,
+                "find_similar_feedback": find_similar_feedback,
+                "get_popular_foods": get_popular_foods,
+                "add_mood_entry": add_mood_entry,
+                "get_mood_trends": get_mood_trends,
+                "hybrid_search": hybrid_food_search,
+                "init": initialize_all_collections
+            }
+        except ImportError as e:
+            print(f"Vector store not available: {e}")
+            return None
+    return _vector_store
+
 
 def _load_json(file_path: str, default: Any = None) -> Any:
-    """Load JSON from file, return default if file doesn't exist or is empty."""
+    """Load JSON from file, return default if file doesn't exist or is empty or invalid."""
     if default is None:
         default = []
     try:
         if os.path.exists(file_path) and os.path.getsize(file_path) > 0:
             with open(file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                # Handle empty dict case for list-expected files
+                if isinstance(data, dict) and not data and default == []:
+                    return []
+                return data
     except (json.JSONDecodeError, IOError):
         pass
     return default
@@ -43,6 +78,7 @@ def _save_json(file_path: str, data: Any) -> None:
 def save_profile(user_id: str, profile_data: Dict) -> Dict:
     """
     Save or update user profile.
+    Also stores in vector database for semantic similarity search.
     
     Args:
         user_id: Unique identifier for the user
@@ -58,6 +94,11 @@ def save_profile(user_id: str, profile_data: Dict) -> Dict:
     profiles[user_id] = profile_data
     
     _save_json(PROFILE_FILE, profiles)
+    
+    # Also store in vector database for semantic search
+    vs = _get_vector_store()
+    if vs:
+        vs["add_profile"](user_id, profile_data)
     
     return {"success": True, "message": "Profile saved successfully"}
 
@@ -77,25 +118,47 @@ def get_all_profiles() -> Dict:
 
 def save_feedback(feedback_data: Dict) -> Dict:
     """
-    Save user feedback for a food recommendation.
-    
-    Args:
-        feedback_data: Dict with keys like user_id, food_name, rating, comment
-    
-    Returns:
-        Dict with success status and message
+    Saves dual-layered feedback (App Experience + Specific Food).
+    Standardizes ratings as integers for future calculations.
     """
     feedback_list = _load_json(FEEDBACK_FILE, [])
     
-    # Add timestamp
+    # 1. ADD SYSTEM METADATA
     feedback_data["timestamp"] = datetime.now().isoformat()
     feedback_data["id"] = len(feedback_list) + 1
     
+    # 2. DATA CLEANING: Convert string ratings from JS to Integers
+    # 'app_rating' = Site feedback | 'rating' = Food item feedback
+    if feedback_data.get("app_rating"):
+        try:
+            feedback_data["app_rating"] = int(feedback_data["app_rating"])
+        except ValueError:
+            pass
+
+    if feedback_data.get("rating"):
+        try:
+            feedback_data["rating"] = int(feedback_data["rating"])
+        except ValueError:
+            pass
+
+    # 3. PERSIST TO JSON
     feedback_list.append(feedback_data)
     _save_json(FEEDBACK_FILE, feedback_list)
     
-    return {"success": True, "message": "Feedback saved", "feedback_id": feedback_data["id"]}
-
+    # 4. VECTOR DATABASE INTEGRATION (Optional Sentiment Search)
+    vs = _get_vector_store()
+    if vs:
+        try:
+            # We index the suggestions/comments for semantic search later
+            vs["add_feedback"](str(feedback_data["id"]), feedback_data)
+        except Exception as e:
+            print(f"Vector Store indexing skipped: {e}")
+    
+    return {
+        "success": True, 
+        "message": "Feedback saved successfully", 
+        "feedback_id": feedback_data["id"]
+    }
 
 def get_feedback(user_id: Optional[str] = None) -> List[Dict]:
     """Get all feedback, optionally filtered by user_id."""
@@ -111,6 +174,7 @@ def get_feedback(user_id: Optional[str] = None) -> List[Dict]:
 def save_history(user_id: str, history_data: Dict) -> Dict:
     """
     Save mood check and food recommendation history.
+    Also stores mood entries in vector database for trend analysis.
     
     Args:
         user_id: Unique identifier for the user
@@ -130,6 +194,19 @@ def save_history(user_id: str, history_data: Dict) -> Dict:
     
     history[user_id].append(history_data)
     _save_json(HISTORY_FILE, history)
+    
+    # Also store mood entry in vector database for trend analysis
+    vs = _get_vector_store()
+    if vs:
+        foods = history_data.get("foods", [])
+        if isinstance(foods, str):
+            foods = [foods]
+        vs["add_mood_entry"](
+            user_id,
+            history_data.get("mood", ""),
+            history_data.get("energy", ""),
+            foods
+        )
     
     return {"success": True, "message": "History saved", "history_id": history_data["id"]}
 
@@ -184,4 +261,28 @@ def get_user_stats(user_id: str) -> Dict:
         "total_spent": total_spend,
         "average_rating": round(avg_rating, 1) if avg_rating else 0,
         "profile": profile
+    }
+
+
+def get_food_ratings_summary() -> Dict[str, Dict]:
+    """Scans feedback.json and calculates average rating + count for every food."""
+    all_feedback = _load_json(FEEDBACK_FILE, [])
+    summary = {}
+
+    for entry in all_feedback:
+        food_name = entry.get("food_name")
+        rating = entry.get("rating")
+
+        if food_name and rating:
+            if food_name not in summary:
+                summary[food_name] = {"total": 0, "count": 0}
+            summary[food_name]["total"] += int(rating)
+            summary[food_name]["count"] += 1
+
+    # Convert totals into averages
+    return {
+        name: {
+            "avg": round(stats["total"] / stats["count"], 1),
+            "count": stats["count"]
+        } for name, stats in summary.items()
     }
