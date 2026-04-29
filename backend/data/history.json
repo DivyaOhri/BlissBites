@@ -49,6 +49,84 @@
       "budget": 110,
       "timestamp": "2026-04-28T21:40:00.910339",
       "id": 2
+    },
+    {
+      "mood": "happy",
+      "energy": "medium",
+      "foods": [
+        "Sunny Side Up (Alpine)",
+        "Poha (WNR)",
+        "Cornflakes (Alpine)"
+      ],
+      "stress": 6,
+      "budget": 150,
+      "timestamp": "2026-04-29T01:42:26.118704",
+      "id": 3
+    },
+    {
+      "mood": "happy",
+      "energy": "medium",
+      "foods": [
+        "Sunny Side Up (Alpine)",
+        "Poha (WNR)",
+        "Cornflakes (Alpine)"
+      ],
+      "stress": 5,
+      "budget": 150,
+      "timestamp": "2026-04-29T01:49:45.142243",
+      "id": 4
+    },
+    {
+      "mood": "anxious",
+      "energy": "medium",
+      "foods": [
+        "Jumbo Pasta (Pizza Town)",
+        "White Sauce Pasta (Pizza Town)",
+        "Onion Pizza (C2C)"
+      ],
+      "stress": 7,
+      "budget": 100,
+      "timestamp": "2026-04-29T01:51:46.502049",
+      "id": 5
+    },
+    {
+      "mood": "anxious",
+      "energy": "medium",
+      "foods": [
+        "Jumbo Pasta (Pizza Town)",
+        "White Sauce Pasta (Pizza Town)",
+        "Onion Pizza (C2C)"
+      ],
+      "stress": 7,
+      "budget": 100,
+      "timestamp": "2026-04-29T20:32:02.192302",
+      "id": 6
+    },
+    {
+      "mood": "happy",
+      "energy": "medium",
+      "foods": [
+        "Tomato Pizza",
+        "Onion Pizza (C2C)",
+        "Margherita Magic Pizza (Wonder Hills)"
+      ],
+      "stress": 5,
+      "budget": 100,
+      "timestamp": "2026-04-29T20:35:16.579195",
+      "id": 7
+    },
+    {
+      "mood": "anxious",
+      "energy": "medium",
+      "foods": [
+        "Onion Pizza (C2C)",
+        "Jumbo Pasta (Pizza Town)",
+        "White Sauce Pasta (Pizza Town)"
+      ],
+      "stress": 7,
+      "budget": 100,
+      "timestamp": "2026-04-29T21:16:43.409412",
+      "id": 8
     }
   ]
 }
