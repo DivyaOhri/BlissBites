@@ -176,7 +176,7 @@ Results rendered dynamically in the browser
 
 | Layer | Technology |
 |---|---|
-| Frontend | HTML, CSS, Vanilla JavaScript |
+| Frontend | HTML5, CSS3(Grid/Flexbox), Vanilla JavaScript |
 | Backend | Python Flask |
 | Emotion Engine | Python rule-based logic |
 | Vector Search | ChromaDB + sentence-transformers |
